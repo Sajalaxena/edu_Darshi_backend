@@ -7,9 +7,26 @@ import webinarRoutes from "./routes/webinar.routes.js";
 dotenv.config();
 
 const app = express();
+const allowedOrigins = process.env.CORS_ORIGIN?.split(",");
 
-app.use(cors());
-app.use(express.json());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (Postman, curl)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
+// handle preflight
+app.options("*", cors());app.use(express.json());
 
 app.use("/api/previous-papers", previousPaperRoutes);
 app.use("/api", researchNewsRoutes);
