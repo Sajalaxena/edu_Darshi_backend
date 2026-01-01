@@ -1,0 +1,256 @@
+openapi: 3.0.0
+info:
+  title: EduDarshi API Documentation
+  description: API documentation for EduDarshi platform
+  version: 1.0.0
+
+servers:
+  - url: https://edudarshi.onrender.com/api
+    description: Production server
+  - url: http://localhost:5000/api
+    description: Local server
+
+tags:
+  - name: Blogs
+  - name: Previous Papers
+  - name: Research & News
+  - name: Webinars
+
+paths:
+  ##########################
+  # BLOGS
+  ##########################
+
+  /blogs:
+    post:
+      tags: [Blogs]
+      summary: Create a blog
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [title, summary, content, author]
+              properties:
+                title:
+                  type: string
+                summary:
+                  type: string
+                content:
+                  type: string
+                author:
+                  type: string
+                category:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+      responses:
+        201:
+          description: Blog created successfully
+        500:
+          description: Server error
+
+    get:
+      tags: [Blogs]
+      summary: Get all blogs
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        200:
+          description: List of blogs
+
+  /blogs/{id}:
+    get:
+      tags: [Blogs]
+      summary: Get single blog
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Blog data
+        404:
+          description: Blog not found
+
+    delete:
+      tags: [Blogs]
+      summary: Delete blog
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Blog deleted
+
+  ##########################
+  # PREVIOUS PAPERS
+  ##########################
+
+  /previous-papers:
+    post:
+      tags: [Previous Papers]
+      summary: Add previous year paper
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [exam, subject, year, paperPdfLink]
+              properties:
+                exam:
+                  type: string
+                subject:
+                  type: string
+                year:
+                  type: integer
+                paperPdfLink:
+                  type: string
+                solutionYoutubeLink:
+                  type: string
+      responses:
+        201:
+          description: Paper added
+        400:
+          description: Validation error
+
+    get:
+      tags: [Previous Papers]
+      summary: Get all previous papers
+      responses:
+        200:
+          description: Papers list
+
+  /previous-papers/{id}:
+    delete:
+      tags: [Previous Papers]
+      summary: Delete previous paper
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Paper deleted
+
+  ##########################
+  # RESEARCH & NEWS
+  ##########################
+
+  /research-news:
+    post:
+      tags: [Research & News]
+      summary: Create research/news item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, type, source]
+              properties:
+                title:
+                  type: string
+                summary:
+                  type: string
+                type:
+                  type: string
+                  enum: [Research, News]
+                source:
+                  type: string
+                publishedDate:
+                  type: string
+      responses:
+        201:
+          description: Item created
+
+    get:
+      tags: [Research & News]
+      summary: Get all research/news
+      responses:
+        200:
+          description: List of items
+
+  /research-news/{id}:
+    delete:
+      tags: [Research & News]
+      summary: Delete research/news
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Item deleted
+
+  ##########################
+  # WEBINARS
+  ##########################
+
+  /webinars:
+    post:
+      tags: [Webinars]
+      summary: Create webinar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, date, time, venue]
+              properties:
+                title:
+                  type: string
+                date:
+                  type: string
+                time:
+                  type: string
+                venue:
+                  type: string
+                description:
+                  type: string
+                registrationLink:
+                  type: string
+      responses:
+        201:
+          description: Webinar created
+
+    get:
+      tags: [Webinars]
+      summary: Get all webinars
+      responses:
+        200:
+          description: Webinar list
+
+  /webinars/{id}:
+    delete:
+      tags: [Webinars]
+      summary: Delete webinar
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Webinar deleted
