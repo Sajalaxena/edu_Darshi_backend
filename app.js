@@ -1,37 +1,48 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+
 import researchNewsRoutes from "./routes/researchNews.routes.js";
 import previousPaperRoutes from "./routes/previousPaper.routes.js";
 import webinarRoutes from "./routes/webinar.routes.js";
+
 dotenv.config();
 
 const app = express();
-const allowedOrigins = process.env.CORS_ORIGIN?.split(",");
+
+/* ---------- CORS ---------- */
+
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(",")
+  : [];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (Postman, curl)
+    origin: (origin, callback) => {
+      // allow server-to-server, Postman, health checks
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+        return callback(null, true);
       }
+
+      return callback(null, false); // clean block
     },
     credentials: true,
   })
 );
 
-// handle preflight
-app.options("*", cors());app.use(express.json());
+/* ---------- MIDDLEWARE ---------- */
+
+app.use(express.json());
+
+/* ---------- ROUTES ---------- */
 
 app.use("/api/previous-papers", previousPaperRoutes);
 app.use("/api", researchNewsRoutes);
 app.use("/api/webinars", webinarRoutes);
 
+/* ---------- HEALTH ---------- */
 
 app.get("/", (req, res) => {
   res.send("EduDarshi Backend Running 🚀");
