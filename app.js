@@ -14,11 +14,12 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 const swaggerDocument = YAML.load("./swagger/swagger.yaml");
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use("/api/previous-papers", previousPaperRoutes);
 app.use("/api/blogs", blogRoutes);
-app.use("/api", researchNewsRoutes);
+app.use("/api/previous-papers", previousPaperRoutes);
+app.use("/api/research-news", researchNewsRoutes);
 app.use("/api/webinars", webinarRoutes);
 
 app.get("/", (req, res) => {
