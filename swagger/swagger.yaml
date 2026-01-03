@@ -15,43 +15,11 @@ tags:
   - name: Previous Papers
   - name: Research & News
   - name: Webinars
+  
 
 paths:
-  ##########################
-  # BLOGS
-  ##########################
 
   /blogs:
-    post:
-      tags: [Blogs]
-      summary: Create a blog
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              required: [title, summary, content, author]
-              properties:
-                title:
-                  type: string
-                summary:
-                  type: string
-                content:
-                  type: string
-                author:
-                  type: string
-                category:
-                  type: string
-                image:
-                  type: string
-                  format: binary
-      responses:
-        201:
-          description: Blog created successfully
-        500:
-          description: Server error
-
     get:
       tags: [Blogs]
       summary: Get all blogs
@@ -68,25 +36,49 @@ paths:
         200:
           description: List of blogs
 
-  /blogs/{id}:
-    get:
+  /blogs/admin/upload:
+    post:
       tags: [Blogs]
-      summary: Get single blog
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+      summary: Create a blog (Admin)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - title
+                - summary
+                - content
+                - category
+                - image
+              properties:
+                title:
+                  type: string
+                  example: My First Blog
+                summary:
+                  type: string
+                content:
+                  type: string
+                category:
+                  type: string
+                author:
+                  type: string
+                image:
+                  type: string
+                  format: binary
       responses:
-        200:
-          description: Blog data
-        404:
-          description: Blog not found
+        201:
+          description: Blog created successfully
+        400:
+          description: Validation error
+        500:
+          description: Server error
 
+  /blogs/admin/{id}:
     delete:
       tags: [Blogs]
-      summary: Delete blog
+      summary: Delete blog (Admin)
       parameters:
         - name: id
           in: path
@@ -96,10 +88,8 @@ paths:
       responses:
         200:
           description: Blog deleted
-
-  ##########################
-  # PREVIOUS PAPERS
-  ##########################
+        404:
+          description: Blog not found
 
   /previous-papers:
     post:
@@ -111,7 +101,11 @@ paths:
           application/json:
             schema:
               type: object
-              required: [exam, subject, year, paperPdfLink]
+              required:
+                - exam
+                - subject
+                - year
+                - paperPdfLink
               properties:
                 exam:
                   type: string
@@ -126,8 +120,6 @@ paths:
       responses:
         201:
           description: Paper added
-        400:
-          description: Validation error
 
     get:
       tags: [Previous Papers]
@@ -150,10 +142,6 @@ paths:
         200:
           description: Paper deleted
 
-  ##########################
-  # RESEARCH & NEWS
-  ##########################
-
   /research-news:
     post:
       tags: [Research & News]
@@ -164,7 +152,10 @@ paths:
           application/json:
             schema:
               type: object
-              required: [title, type, source]
+              required:
+                - title
+                - type
+                - source
               properties:
                 title:
                   type: string
@@ -202,10 +193,6 @@ paths:
         200:
           description: Item deleted
 
-  ##########################
-  # WEBINARS
-  ##########################
-
   /webinars:
     post:
       tags: [Webinars]
@@ -216,7 +203,11 @@ paths:
           application/json:
             schema:
               type: object
-              required: [title, date, time, venue]
+              required:
+                - title
+                - date
+                - time
+                - venue
               properties:
                 title:
                   type: string
