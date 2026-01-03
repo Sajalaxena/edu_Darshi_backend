@@ -1,8 +1,9 @@
 import Blog from "../models/Blog.js";
+import mongoose from "mongoose";
 
 /**
  * ADMIN: Create Blog
- * Image  uploaad on Cloudinary  
+ * Image upload on Cloudinary
  */
 export const createBlog = async (req, res) => {
   try {
@@ -15,11 +16,12 @@ export const createBlog = async (req, res) => {
     }
 
     if (!req.file) {
-  return res.status(400).json({ message: "Image is required" });
-}
+      return res.status(400).json({
+        message: "Image is required",
+      });
+    }
 
-const imageUrl = req.file.path;
-
+    const imageUrl = req.file.path; // Cloudinary URL
 
     const blog = await Blog.create({
       title,
@@ -27,7 +29,7 @@ const imageUrl = req.file.path;
       content,
       category,
       author: author || "admin",
-      imageUrl: req.file.path, // Cloudinary URL
+      imageUrl,
     });
 
     return res.status(201).json({
@@ -44,8 +46,7 @@ const imageUrl = req.file.path;
 };
 
 /**
- * PUBLIC: Get Blogs (Users)
- 
+ * PUBLIC: Get All Blogs (with pagination)
  */
 export const getBlogs = async (req, res) => {
   try {
@@ -65,7 +66,6 @@ export const getBlogs = async (req, res) => {
         .skip(skip)
         .limit(limit)
         .select("_id title summary author category imageUrl publishedAt"),
-
       Blog.countDocuments(filter),
     ]);
 
@@ -87,11 +87,50 @@ export const getBlogs = async (req, res) => {
 };
 
 /**
+ * PUBLIC: Get Blog By ID
+ */
+export const getBlogById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // ✅ Invalid Mongo ID safety
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid blog ID",
+      });
+    }
+
+    const blog = await Blog.findById(id);
+
+    if (!blog) {
+      return res.status(404).json({
+        message: "Blog not found",
+      });
+    }
+
+    return res.status(200).json({
+      data: blog,
+    });
+  } catch (error) {
+    console.error("Get blog by id error:", error);
+    return res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+/**
  * ADMIN: Delete Blog
  */
 export const deleteBlog = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid blog ID",
+      });
+    }
 
     const blog = await Blog.findById(id);
 
