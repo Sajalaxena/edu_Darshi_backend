@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import ResearchNews from "../models/ResearchNews.js";
+
 
 /**
  * ADMIN – Create research/news
@@ -45,6 +47,43 @@ export const getResearchNews = async (req, res) => {
   }
 };
 
+
+
+
+/**
+ * PUBLIC: Get research/news by ID
+ */
+export const getResearchNewsById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // ✅ MongoDB ObjectId validation
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid research/news ID",
+      });
+    }
+
+    const item = await ResearchNews.findById(id);
+
+    if (!item) {
+      return res.status(404).json({
+        message: "Research/News item not found",
+      });
+    }
+
+    return res.status(200).json({
+      data: item,
+    });
+  } catch (error) {
+    console.error("Get research/news by ID error:", error);
+    return res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+
 /**
  * ADMIN – Delete by ID
  */
@@ -52,16 +91,28 @@ export const deleteResearchNews = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deleted = await ResearchNews.findByIdAndDelete(id);
-    if (!deleted) {
-      return res.status(404).json({ message: "Item not found" });
+    // ✅ ObjectId validation
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid research/news ID",
+      });
     }
 
-    res.json({ message: "Item deleted successfully" });
+    const deleted = await ResearchNews.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({
+        message: "Research/News item not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Item deleted successfully",
+    });
   } catch (err) {
-    res.status(500).json({
-      message: "Failed to delete item",
-      error: err.message,
+    console.error("Delete research/news error:", err);
+    return res.status(500).json({
+      message: "Server error",
     });
   }
 };
