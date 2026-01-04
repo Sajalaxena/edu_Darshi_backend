@@ -1,4 +1,5 @@
 openapi: 3.0.0
+
 info:
   title: EduDarshi API Documentation
   description: API documentation for EduDarshi platform
@@ -15,7 +16,6 @@ tags:
   - name: Previous Papers
   - name: Research & News
   - name: Webinars
-  
 
 paths:
 
@@ -28,10 +28,12 @@ paths:
           in: query
           schema:
             type: integer
+            example: 1
         - name: limit
           in: query
           schema:
             type: integer
+            example: 10
       responses:
         200:
           description: List of blogs
@@ -46,6 +48,7 @@ paths:
           required: true
           schema:
             type: string
+            example: "65ab1234ef9012"
       responses:
         200:
           description: Blog fetched successfully
@@ -71,14 +74,19 @@ paths:
               properties:
                 title:
                   type: string
+                  example: "My First Blog"
                 summary:
                   type: string
+                  example: "Short summary"
                 content:
                   type: string
+                  example: "Full blog content"
                 category:
                   type: string
+                  example: "Technology"
                 author:
                   type: string
+                  example: "Admin"
                 image:
                   type: string
                   format: binary
@@ -100,10 +108,10 @@ paths:
         200:
           description: Blog deleted
 
-  /previous-papers:
+  /previous-papers/admin/upload:
     post:
       tags: [Previous Papers]
-      summary: Add previous year paper
+      summary: Add previous year paper (Admin)
       requestBody:
         required: true
         content:
@@ -114,22 +122,27 @@ paths:
                 - exam
                 - subject
                 - year
-                - paperPdfLink
               properties:
                 exam:
                   type: string
+                  example: "UPSC"
                 subject:
                   type: string
+                  example: "History"
                 year:
                   type: integer
+                  example: 2023
                 paperPdfLink:
                   type: string
+                  example: "https://drive.google.com/file/d/1ABCxyz/view?usp=sharing"
                 solutionYoutubeLink:
                   type: string
+                  example: "https://www.youtube.com/watch?v=abc"
       responses:
         201:
           description: Paper added
 
+  /previous-papers:
     get:
       tags: [Previous Papers]
       summary: Get all previous papers
@@ -137,10 +150,10 @@ paths:
         200:
           description: Papers list
 
-  /previous-papers/{id}:
+  /previous-papers/admin/{id}:
     delete:
       tags: [Previous Papers]
-      summary: Delete previous paper
+      summary: Delete previous paper (Admin)
       parameters:
         - name: id
           in: path
@@ -151,7 +164,7 @@ paths:
         200:
           description: Paper deleted
 
-  /research-news:
+  /research-news/admin/upload:
     post:
       tags: [Research & News]
       summary: Create research/news item
@@ -168,19 +181,25 @@ paths:
               properties:
                 title:
                   type: string
+                  example: "AI in Education"
                 summary:
                   type: string
+                  example: "Short description"
                 type:
                   type: string
                   enum: [Research, News]
                 source:
                   type: string
+                  example: "Google Scholar"
                 publishedDate:
                   type: string
+                  format: date-time
+                  example: "2024-01-15T10:30:00Z"
       responses:
         201:
           description: Item created
 
+  /research-news:
     get:
       tags: [Research & News]
       summary: Get all research/news
@@ -189,6 +208,20 @@ paths:
           description: List of items
 
   /research-news/{id}:
+    get:
+      tags: [Research & News]
+      summary: Get research/news by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Item fetched
+
+  /research-news/admin/{id}:
     delete:
       tags: [Research & News]
       summary: Delete research/news
@@ -220,12 +253,17 @@ paths:
               properties:
                 title:
                   type: string
+                  example: "Java Webinar"
                 date:
                   type: string
+                  format: date
+                  example: "2024-02-10"
                 time:
                   type: string
+                  example: "10:00 AM"
                 venue:
                   type: string
+                  example: "Online"
                 description:
                   type: string
                 registrationLink:

@@ -11,6 +11,7 @@ const researchNewsSchema = new mongoose.Schema(
     type: {
       type: String,
       enum: ["news", "research"],
+      lowercase:true,
       required: true,
     },
 
