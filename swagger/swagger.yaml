@@ -1,64 +1,83 @@
 openapi: 3.0.0
 
 info:
-  title: EduDarshi API Documentation
-  description: API documentation for EduDarshi platform
+  title: EduDarshi API
+  description: |
+    EduDarshi is an educational content platform providing blogs, previous year question papers,
+    research articles, news updates, webinars, and a daily question feature.
+    
+    This API enables both public access and administrative operations for managing educational resources.
   version: 1.0.0
 
 servers:
   - url: https://edudarshi.onrender.com/api
-    description: Production server
+    description: Production Environment
   - url: http://localhost:5000/api
-    description: Local server
+    description: Local Development Environment
 
 tags:
   - name: Blogs
+    description: Blog management and retrieval APIs
   - name: Previous Papers
+    description: Previous year examination papers APIs
   - name: Research & News
+    description: Research articles and education-related news APIs
   - name: Webinars
+    description: Webinar creation and listing APIs
+  - name: Question
+    description: Question of the Day APIs
 
 paths:
 
+  ############################
+  # BLOGS
+  ############################
   /blogs:
     get:
       tags: [Blogs]
-      summary: Get all blogs
+      summary: Fetch all blogs
+      description: Retrieve a paginated list of published blogs.
       parameters:
         - name: page
           in: query
+          description: Page number for pagination
           schema:
             type: integer
             example: 1
         - name: limit
           in: query
+          description: Number of blogs per page
           schema:
             type: integer
             example: 10
       responses:
         200:
-          description: List of blogs
+          description: Successfully retrieved list of blogs
 
   /blogs/{id}:
     get:
       tags: [Blogs]
-      summary: Get blog by ID
+      summary: Fetch blog by ID
+      description: Retrieve a single blog using its unique identifier.
       parameters:
         - name: id
           in: path
           required: true
+          description: Unique blog ID
           schema:
             type: string
             example: "65ab1234ef9012"
       responses:
         200:
-          description: Blog fetched successfully
+          description: Blog retrieved successfully
         404:
           description: Blog not found
 
   /blogs/admin/upload:
     post:
       tags: [Blogs]
-      summary: Create a blog (Admin)
+      summary: Create a new blog (Admin)
+      description: Upload and publish a new blog with image support.
       requestBody:
         required: true
         content:
@@ -74,19 +93,14 @@ paths:
               properties:
                 title:
                   type: string
-                  example: "My First Blog"
                 summary:
                   type: string
-                  example: "Short summary"
                 content:
                   type: string
-                  example: "Full blog content"
                 category:
                   type: string
-                  example: "Technology"
                 author:
                   type: string
-                  example: "Admin"
                 image:
                   type: string
                   format: binary
@@ -97,21 +111,36 @@ paths:
   /blogs/admin/{id}:
     delete:
       tags: [Blogs]
-      summary: Delete blog (Admin)
+      summary: Delete a blog (Admin)
+      description: Permanently delete a blog using its ID.
       parameters:
         - name: id
           in: path
           required: true
+          description: Blog ID
           schema:
             type: string
       responses:
         200:
-          description: Blog deleted
+          description: Blog deleted successfully
+
+  ############################
+  # PREVIOUS PAPERS
+  ############################
+  /previous-papers:
+    get:
+      tags: [Previous Papers]
+      summary: Fetch all previous year papers
+      description: Retrieve a list of available previous year examination papers.
+      responses:
+        200:
+          description: Successfully retrieved papers list
 
   /previous-papers/admin/upload:
     post:
       tags: [Previous Papers]
-      summary: Add previous year paper (Admin)
+      summary: Add a previous year paper (Admin)
+      description: Upload examination paper details with optional solution links.
       requestBody:
         required: true
         content:
@@ -125,49 +154,67 @@ paths:
               properties:
                 exam:
                   type: string
-                  example: "UPSC"
                 subject:
                   type: string
-                  example: "History"
                 year:
                   type: integer
-                  example: 2023
                 paperPdfLink:
                   type: string
-                  example: "https://drive.google.com/file/d/1ABCxyz/view?usp=sharing"
                 solutionYoutubeLink:
                   type: string
-                  example: "https://www.youtube.com/watch?v=abc"
       responses:
         201:
-          description: Paper added
-
-  /previous-papers:
-    get:
-      tags: [Previous Papers]
-      summary: Get all previous papers
-      responses:
-        200:
-          description: Papers list
+          description: Previous paper added successfully
 
   /previous-papers/admin/{id}:
     delete:
       tags: [Previous Papers]
-      summary: Delete previous paper (Admin)
+      summary: Delete a previous paper (Admin)
+      description: Remove a previous year paper using its ID.
       parameters:
         - name: id
           in: path
           required: true
+          description: Paper ID
           schema:
             type: string
       responses:
         200:
-          description: Paper deleted
+          description: Paper deleted successfully
+
+  ############################
+  # RESEARCH & NEWS
+  ############################
+  /research-news:
+    get:
+      tags: [Research & News]
+      summary: Fetch all research and news items
+      description: Retrieve published research articles and education-related news.
+      responses:
+        200:
+          description: Successfully retrieved list
+
+  /research-news/{id}:
+    get:
+      tags: [Research & News]
+      summary: Fetch research/news by ID
+      description: Retrieve a specific research or news item.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Item ID
+          schema:
+            type: string
+      responses:
+        200:
+          description: Item retrieved successfully
 
   /research-news/admin/upload:
     post:
       tags: [Research & News]
-      summary: Create research/news item
+      summary: Create research or news item (Admin)
+      description: Publish a new research article or news update.
       requestBody:
         required: true
         content:
@@ -181,64 +228,44 @@ paths:
               properties:
                 title:
                   type: string
-                  example: "AI in Education"
                 summary:
                   type: string
-                  example: "Short description"
                 type:
                   type: string
                   enum: [Research, News]
                 source:
                   type: string
-                  example: "Google Scholar"
                 publishedDate:
                   type: string
                   format: date-time
-                  example: "2024-01-15T10:30:00Z"
       responses:
         201:
-          description: Item created
-
-  /research-news:
-    get:
-      tags: [Research & News]
-      summary: Get all research/news
-      responses:
-        200:
-          description: List of items
-
-  /research-news/{id}:
-    get:
-      tags: [Research & News]
-      summary: Get research/news by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Item fetched
+          description: Item created successfully
 
   /research-news/admin/{id}:
     delete:
       tags: [Research & News]
-      summary: Delete research/news
+      summary: Delete research/news item (Admin)
+      description: Delete a research or news entry by ID.
       parameters:
         - name: id
           in: path
           required: true
+          description: Item ID
           schema:
             type: string
       responses:
         200:
-          description: Item deleted
+          description: Item deleted successfully
 
+  ############################
+  # WEBINARS
+  ############################
   /webinars:
     post:
       tags: [Webinars]
-      summary: Create webinar
+      summary: Create a webinar
+      description: Schedule and publish a new webinar.
       requestBody:
         required: true
         content:
@@ -253,42 +280,102 @@ paths:
               properties:
                 title:
                   type: string
-                  example: "Java Webinar"
                 date:
                   type: string
                   format: date
-                  example: "2024-02-10"
                 time:
                   type: string
-                  example: "10:00 AM"
                 venue:
                   type: string
-                  example: "Online"
                 description:
                   type: string
                 registrationLink:
                   type: string
       responses:
         201:
-          description: Webinar created
+          description: Webinar created successfully
 
     get:
       tags: [Webinars]
-      summary: Get all webinars
+      summary: Fetch all webinars
+      description: Retrieve a list of upcoming and past webinars.
       responses:
         200:
-          description: Webinar list
+          description: Webinar list retrieved
 
   /webinars/{id}:
     delete:
       tags: [Webinars]
-      summary: Delete webinar
+      summary: Delete a webinar
+      description: Remove a webinar by its ID.
       parameters:
         - name: id
           in: path
           required: true
+          description: Webinar ID
           schema:
             type: string
       responses:
         200:
-          description: Webinar deleted
+          description: Webinar deleted successfully
+
+  ############################
+  # QUESTION OF THE DAY
+  ############################
+  /question:
+    get:
+      tags: [Question]
+      summary: Get Question of the Day
+      description: Retrieve the currently active question of the day.
+      responses:
+        200:
+          description: Active question retrieved
+        404:
+          description: No active question available
+
+  /question/submit:
+    post:
+      tags: [Question]
+      summary: Submit answer for Question of the Day
+      description: Submit an answer to evaluate correctness.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - questionId
+                - answer
+              properties:
+                questionId:
+                  type: string
+                answer:
+                  type: string
+      responses:
+        200:
+          description: Answer evaluated successfully
+
+  /question/admin/bulk:
+    post:
+      tags: [Question]
+      summary: Bulk upload questions (Admin)
+      description: Upload multiple questions at once for future scheduling.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - questions
+              properties:
+                questions:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - question
+                      - options
+                      - correctAnswer
+      responses:
+        201:
+          description: Questions uploaded successfully

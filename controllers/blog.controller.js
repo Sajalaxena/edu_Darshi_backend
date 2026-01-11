@@ -11,17 +11,17 @@ export const createBlog = async (req, res) => {
 
     if (!title || !summary || !content || !category) {
       return res.status(400).json({
-        message: "All fields are required",
+        message: "title, summary, content and category are required",
       });
     }
 
     if (!req.file) {
       return res.status(400).json({
-        message: "Image is required",
+        message: "Image file missing (field name must be 'image')",
       });
     }
 
-    const imageUrl = req.file.path; // Cloudinary URL
+    const imageUrl = req.file.path;
 
     const blog = await Blog.create({
       title,
@@ -40,7 +40,6 @@ export const createBlog = async (req, res) => {
     console.error("Create blog error:", error);
     return res.status(500).json({
       message: "Failed to create blog",
-      error: error.message,
     });
   }
 };
