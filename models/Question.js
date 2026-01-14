@@ -2,38 +2,28 @@ import mongoose from "mongoose";
 
 const questionSchema = new mongoose.Schema(
   {
-    question: {
-      type: String,
-      required: true,
-    },
+    question: { type: String, required: true },
 
     options: {
       type: [String],
       required: true,
+      validate: (v) => v.length >= 2,
     },
 
-    correctAnswer: {
-      type: String,
+    correctAnswer: { type: String, required: true },
+
+    explanation: String,
+
+    solutionVideoUrl: String,
+
+    scheduledDate: {
+      type: Date,
       required: true,
+      index: true,
     },
 
-    explanation: {
-      type: String,
-    },
-
-    solutionVideoUrl: {
-      type: String,
-    },
-
-    hasBeenShown: {
-      type: Boolean,
-      default: false,
-    },
-
-    isActive: {
-      type: Boolean,
-      default: false,
-    },
+    hasBeenShown: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

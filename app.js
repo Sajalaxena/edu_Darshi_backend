@@ -9,6 +9,7 @@ import previousPaperRoutes from "./routes/previousPaper.routes.js";
 import webinarRoutes from "./routes/webinar.routes.js";
 import blogRoutes from "./routes/blog.routes.js";
 import questionRoutes from "./routes/question.routes.js";
+import "./cron/question.cron.js";
 
 const app = express();
 

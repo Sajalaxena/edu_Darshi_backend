@@ -1,14 +1,24 @@
 import express from "express";
+import { upload } from "../middleware/uploadquestions.js";
 import {
+  bulkUploadFromFile,
   getTodayQuestion,
   submitAnswer,
-  bulkUploadQuestions,
+  createSingleQuestion,
 } from "../controllers/question.controller.js";
 
 const router = express.Router();
 
-router.get("/", getTodayQuestion);          // GET /api/question
-router.post("/submit", submitAnswer);       // POST /api/question/submit
-router.post("/admin/bulk", bulkUploadQuestions);
+/* -------- PUBLIC -------- */
+router.get("/today", getTodayQuestion);
+router.post("/submit", submitAnswer);
+
+/* -------- ADMIN -------- */
+router.post("/admin", createSingleQuestion);
+router.post(
+  "/admin/upload",
+  upload.single("file"),
+  bulkUploadFromFile
+);
 
 export default router;
