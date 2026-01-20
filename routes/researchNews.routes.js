@@ -4,6 +4,7 @@ import {
   getResearchNews,
   deleteResearchNews,
   getResearchNewsById,
+  updateResearchNews,
 } from "../controllers/researchNews.controller.js";
 
 const router = express.Router();
@@ -12,6 +13,8 @@ const router = express.Router();
  * ADMIN
  */
 router.post("/admin/upload", createResearchNews);
+router.put("/admin/:id", updateResearchNews);
+
 router.delete("/admin/:id", deleteResearchNews);
 
 /**

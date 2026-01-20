@@ -4,6 +4,7 @@ import {
   getBlogs,
   getBlogById,
   deleteBlog,
+  updateBlog,
 } from "../controllers/blog.controller.js";
 
 import uploadBlogImage from "../middleware/uploadBlogImage.js";
@@ -14,11 +15,18 @@ const router = express.Router();
 router.get("/", getBlogs);
 router.get("/:id", getBlogById);
 
-// ADMIN 
+// ADMIN
 router.post(
   "/admin/upload",
   uploadBlogImage.single("image"), // 👈 VERY IMPORTANT
-  createBlog
+  createBlog,
+);
+
+// ADMIN: Update blog
+router.put(
+  "/admin/:id",
+  uploadBlogImage.single("image"), // image OPTIONAL
+  updateBlog,
 );
 
 router.delete("/admin/:id", deleteBlog);

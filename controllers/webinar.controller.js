@@ -16,6 +16,42 @@ export const createWebinar = async (req, res) => {
   }
 };
 
+/* ================= UPDATE ================= */
+export const updateWebinar = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // ✅ Basic ObjectId safety (recommended)
+    if (!id || id.length !== 24) {
+      return res.status(400).json({
+        message: "Invalid webinar ID",
+      });
+    }
+
+    const updatedWebinar = await Webinar.findByIdAndUpdate(
+      id,
+      { $set: req.body }, // partial update
+      { new: true, runValidators: true },
+    );
+
+    if (!updatedWebinar) {
+      return res.status(404).json({
+        message: "Webinar not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Webinar updated successfully",
+      data: updatedWebinar,
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: "Failed to update webinar",
+      error: err.message,
+    });
+  }
+};
+
 /* ================= GET ALL ================= */
 export const getWebinars = async (req, res) => {
   try {

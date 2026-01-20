@@ -119,6 +119,60 @@ export const getBlogById = async (req, res) => {
 };
 
 /**
+ * ADMIN: Update Blog
+ * Image update is optional
+ */
+export const updateBlog = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // 1️⃣ Validate Mongo ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid blog ID",
+      });
+    }
+
+    // 2️⃣ Find blog
+    const blog = await Blog.findById(id);
+    if (!blog) {
+      return res.status(404).json({
+        message: "Blog not found",
+      });
+    }
+
+    // 3️⃣ Extract body
+    const { title, summary, content, category, author, isPublished } = req.body;
+
+    // 4️⃣ Update only provided fields
+    if (title !== undefined) blog.title = title;
+    if (summary !== undefined) blog.summary = summary;
+    if (content !== undefined) blog.content = content;
+    if (category !== undefined) blog.category = category;
+    if (author !== undefined) blog.author = author;
+    if (isPublished !== undefined) blog.isPublished = isPublished;
+
+    // 5️⃣ Optional image update
+    if (req.file) {
+      blog.imageUrl = req.file.path;
+    }
+
+    // 6️⃣ Save
+    const updatedBlog = await blog.save();
+
+    return res.status(200).json({
+      message: "Blog updated successfully",
+      data: updatedBlog,
+    });
+  } catch (error) {
+    console.error("Update blog error:", error);
+    return res.status(500).json({
+      message: "Failed to update blog",
+    });
+  }
+};
+
+/**
  * ADMIN: Delete Blog
  */
 export const deleteBlog = async (req, res) => {

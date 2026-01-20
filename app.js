@@ -10,6 +10,7 @@ import webinarRoutes from "./routes/webinar.routes.js";
 import blogRoutes from "./routes/blog.routes.js";
 import questionRoutes from "./routes/question.routes.js";
 import "./cron/question.cron.js";
+import contactRoutes from "./routes/contact.routes.js";
 
 const app = express();
 
@@ -19,9 +20,8 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: false,
-  })
+  }),
 );
-
 
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ limit: "5mb", extended: true }));
@@ -37,7 +37,7 @@ app.use("/api/previous-papers", previousPaperRoutes);
 app.use("/api/research-news", researchNewsRoutes);
 app.use("/api/webinars", webinarRoutes);
 app.use("/api/question", questionRoutes);
-
+app.use("/api/contact", contactRoutes);
 
 // Health check
 app.get("/", (req, res) => {

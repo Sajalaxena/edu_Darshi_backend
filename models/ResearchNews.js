@@ -11,7 +11,7 @@ const researchNewsSchema = new mongoose.Schema(
     type: {
       type: String,
       enum: ["news", "research"],
-      lowercase:true,
+      lowercase: true,
       required: true,
     },
 
@@ -28,7 +28,7 @@ const researchNewsSchema = new mongoose.Schema(
 
     summary: {
       type: String,
-      required: true,
+      required: false,
     },
 
     externalLink: {
@@ -36,7 +36,7 @@ const researchNewsSchema = new mongoose.Schema(
       default: "",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("ResearchNews", researchNewsSchema);

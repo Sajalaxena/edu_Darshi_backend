@@ -1,7 +1,41 @@
 import mongoose from "mongoose";
 import ResearchNews from "../models/ResearchNews.js";
 
+export const updateResearchNews = async (req, res) => {
+  try {
+    const { id } = req.params;
 
+    // ✅ MongoDB ObjectId validation
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid research/news ID",
+      });
+    }
+
+    const updatedItem = await ResearchNews.findByIdAndUpdate(
+      id,
+      { $set: req.body },
+      { new: true, runValidators: true },
+    );
+
+    if (!updatedItem) {
+      return res.status(404).json({
+        message: "Research/News item not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Item updated successfully",
+      data: updatedItem,
+    });
+  } catch (err) {
+    console.error("Update research/news error:", err);
+    return res.status(400).json({
+      message: "Failed to update item",
+      error: err.message,
+    });
+  }
+};
 /**
  * ADMIN – Create research/news
  */
@@ -47,9 +81,6 @@ export const getResearchNews = async (req, res) => {
   }
 };
 
-
-
-
 /**
  * PUBLIC: Get research/news by ID
  */
@@ -82,7 +113,6 @@ export const getResearchNewsById = async (req, res) => {
     });
   }
 };
-
 
 /**
  * ADMIN – Delete by ID
