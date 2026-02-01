@@ -1,7 +1,9 @@
 import express from "express";
-import nodemailer from "nodemailer";
+import sgMail from "@sendgrid/mail";
 
 const router = express.Router();
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 router.post("/", async (req, res) => {
   const {
@@ -16,16 +18,6 @@ router.post("/", async (req, res) => {
   } = req.body;
 
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtpout.secureserver.net",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.EMAIL_USER, // contact@edudarshi.in
-        pass: process.env.EMAIL_PASS, // email password
-      },
-    });
-
     const html = `
       <h2>New Contact Query</h2>
       <p><strong>Name:</strong> ${name}</p>
@@ -38,17 +30,19 @@ router.post("/", async (req, res) => {
       <p><strong>Purpose:</strong><br/>${purpose}</p>
     `;
 
-    await transporter.sendMail({
-      from: `"EduDarshi Website" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_USER,
+    const msg = {
+      to: process.env.EMAIL_USER, // receive mail
+      from: process.env.EMAIL_USER, // MUST be verified sender in SendGrid
       replyTo: email,
       subject: `New Contact Query – ${subject}`,
       html,
-    });
+    };
+
+    await sgMail.send(msg);
 
     return res.status(200).json({ message: "Email sent successfully" });
   } catch (err) {
-    console.error("Email error:", err);
+    console.error("SendGrid Email Error:", err.response?.body || err);
     return res.status(500).json({ message: "Failed to send email" });
   }
 });
