@@ -38,29 +38,43 @@ export const submitAnswer = async (req, res) => {
 /* ================= ADMIN: SINGLE QUESTION ================= */
 
 export const createSingleQuestion = async (req, res) => {
-  const {
-    question,
-    options,
-    correctAnswer,
-    explanation,
-    solutionVideoUrl,
-    scheduledDate,
-  } = req.body;
-
-  if (!question || !options?.length || !correctAnswer || !scheduledDate) {
-    return res.status(400).json({ message: "Missing required fields" });
+  try {
+    const question = await Question.create(req.body);
+    res.status(201).json(question);
+  } catch (err) {
+    if (err.code === 11000) {
+      return res
+        .status(409)
+        .json({ message: "Question already exists for this date" });
+    }
+    res.status(500).json({ message: err.message });
   }
+};
 
-  const q = await Question.create({
-    question,
-    options,
-    correctAnswer,
-    explanation,
-    solutionVideoUrl,
-    scheduledDate: new Date(scheduledDate),
-  });
+export const getAllQuestions = async (req, res) => {
+  try {
+    const questions = await Question.find().sort({ scheduledDate: -1 });
+    res.json(questions);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
-  res.status(201).json({ message: "Question created", data: q });
+// controllers/question.controller.js
+export const deleteQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deleted = await Question.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Question not found" });
+    }
+
+    res.json({ message: "Question deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 /* ================= ADMIN: BULK UPLOAD FROM EXCEL / CSV ================= */

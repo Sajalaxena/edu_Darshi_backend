@@ -43,10 +43,7 @@ export const getPapers = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const [papers, total] = await Promise.all([
-      PreviousPaper.find()
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit),
+      PreviousPaper.find().sort({ createdAt: -1 }).skip(skip).limit(limit),
       PreviousPaper.countDocuments(),
     ]);
 
@@ -63,7 +60,6 @@ export const getPapers = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch papers" });
   }
 };
-
 
 /**
  * DELETE /api/previous-papers/:id
@@ -93,6 +89,51 @@ export const deletePaper = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Server error while deleting paper",
+    });
+  }
+};
+
+/**
+ * PUT /api/previous-papers/admin/:id
+ * Admin only
+ */
+export const updatePaper = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { exam, subject, year, paperPdfLink, solutionYoutubeLink } = req.body;
+
+    if (paperPdfLink && !paperPdfLink.startsWith("https://drive.google.com")) {
+      return res.status(400).json({
+        message: "Invalid Google Drive link",
+      });
+    }
+
+    const updatedPaper = await PreviousPaper.findByIdAndUpdate(
+      id,
+      {
+        exam,
+        subject,
+        year,
+        paperPdfLink,
+        solutionYoutubeLink,
+      },
+      { new: true, runValidators: true },
+    );
+
+    if (!updatedPaper) {
+      return res.status(404).json({
+        message: "Previous paper not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Previous paper updated successfully",
+      paper: updatedPaper,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to update paper",
+      error: error.message,
     });
   }
 };

@@ -3,6 +3,7 @@ import {
   createPaper,
   getPapers,
   deletePaper,
+  updatePaper,
 } from "../controllers/previousPaper.controller.js";
 
 const router = express.Router();
@@ -11,7 +12,9 @@ const router = express.Router();
  * ADMIN
  */
 router.post("/admin/upload", createPaper);
+router.put("/admin/:id", updatePaper);
 router.delete("/admin/:id", deletePaper);
+
 /**
  * PUBLIC
  */

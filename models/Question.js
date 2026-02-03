@@ -25,7 +25,7 @@ const questionSchema = new mongoose.Schema(
     hasBeenShown: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("Question", questionSchema);
