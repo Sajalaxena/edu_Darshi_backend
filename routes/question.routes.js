@@ -6,6 +6,7 @@ import {
   submitAnswer,
   createSingleQuestion,
   deleteQuestion,
+  getAllQuestions
 } from "../controllers/question.controller.js";
 
 const router = express.Router();
