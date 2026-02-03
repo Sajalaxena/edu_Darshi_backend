@@ -3,18 +3,34 @@ import xlsx from "xlsx";
 
 /* ================= GET TODAY QUESTION ================= */
 
+
+const startOfDay = new Date();
+startOfDay.setHours(0, 0, 0, 0);
+
+const endOfDay = new Date();
+endOfDay.setHours(23, 59, 59, 999);
 export const getTodayQuestion = async (req, res) => {
-  const question = await Question.findOne({
-    isActive: true,
-    hasBeenShown: false,
-  }).select("question options");
+  try {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
 
-  if (!question) {
-    return res.status(404).json({ message: "No active question today" });
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
+
+    const question = await Question.findOne({
+      scheduledDate: { $gte: start, $lte: end },
+    }).select("question options");
+
+    if (!question) {
+      return res.status(404).json({ message: "No question scheduled for today" });
+    }
+
+    res.json({ data: question });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
-
-  res.json({ data: question });
 };
+
 
 /* ================= SUBMIT ANSWER ================= */
 
