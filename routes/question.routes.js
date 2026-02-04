@@ -6,7 +6,8 @@ import {
   submitAnswer,
   createSingleQuestion,
   deleteQuestion,
-  getAllQuestions
+  getAllQuestions,
+  updateQuestion
 } from "../controllers/question.controller.js";
 
 const router = express.Router();
@@ -16,6 +17,7 @@ router.get("/today", getTodayQuestion);
 router.post("/submit", submitAnswer);
 // routes/question.routes.js
 router.delete("/admin/:id", deleteQuestion);
+router.put("/admin/:id", updateQuestion);
 
 /* -------- ADMIN -------- */
 router.post("/admin", createSingleQuestion);

@@ -136,3 +136,47 @@ export const bulkUploadFromFile = async (req, res) => {
     count: questions.length,
   });
 };
+
+/* ================= ADMIN: UPDATE QUESTION ================= */
+export const updateQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const update = req.body;
+
+    // Ensure scheduledDate is a Date object if present
+    if (update.scheduledDate) {
+      update.scheduledDate = new Date(update.scheduledDate);
+
+      // Check for date conflict (another question on same date)
+      const start = new Date(update.scheduledDate);
+      start.setHours(0, 0, 0, 0);
+
+      const end = new Date(update.scheduledDate);
+      end.setHours(23, 59, 59, 999);
+
+      const conflict = await Question.findOne({
+        _id: { $ne: id },
+        scheduledDate: { $gte: start, $lte: end },
+      });
+
+      if (conflict) {
+        return res.status(409).json({
+          message: "Another question already exists for this date",
+        });
+      }
+    }
+
+    const updated = await Question.findByIdAndUpdate(id, update, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updated) {
+      return res.status(404).json({ message: "Question not found" });
+    }
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
