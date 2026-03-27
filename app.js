@@ -11,6 +11,10 @@ import blogRoutes from "./routes/blog.routes.js";
 import questionRoutes from "./routes/question.routes.js";
 import "./cron/question.cron.js";
 import contactRoutes from "./routes/contact.routes.js";
+import eventRoutes from "./routes/event.routes.js";
+import academicPositionRoutes from "./routes/academicPosition.routes.js";
+import jobRoutes from "./routes/job.routes.js";
+
 
 const app = express();
 
@@ -38,6 +42,10 @@ app.use("/api/research-news", researchNewsRoutes);
 app.use("/api/webinars", webinarRoutes);
 app.use("/api/question", questionRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/academic-positions", academicPositionRoutes);
+app.use("/api/jobs", jobRoutes);
+
 
 // Health check
 app.get("/", (req, res) => {
