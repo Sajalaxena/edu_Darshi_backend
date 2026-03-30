@@ -42,7 +42,7 @@ export const getPapers = async (req, res) => {
   try {
     // If no explicit page param, return everything (main UI)
     if (req.query.page === undefined) {
-      const papers = await PreviousPaper.find().sort({ createdAt: -1 });
+      const papers = await PreviousPaper.find().sort({ year: -1, createdAt: -1 });
       return res.json({
         data: papers,
         pagination: {
@@ -60,7 +60,7 @@ export const getPapers = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const [papers, total] = await Promise.all([
-      PreviousPaper.find().sort({ createdAt: -1 }).skip(skip).limit(limit),
+      PreviousPaper.find().sort({ year: -1, createdAt: -1 }).skip(skip).limit(limit),
       PreviousPaper.countDocuments(),
     ]);
 
