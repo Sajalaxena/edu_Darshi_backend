@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Event from "../models/Event.js";
+import xlsx from "xlsx";
 
 export const createEvent = async (req, res) => {
   try {
@@ -66,5 +67,60 @@ export const deleteEvent = async (req, res) => {
     res.json({ message: "Event deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+const parseExcelDateToText = (val) => {
+  if (!val) return "";
+  if (typeof val === 'number') {
+    const date = new Date(Math.round((val - 25569) * 86400 * 1000));
+    const dd = String(date.getUTCDate()).padStart(2, "0");
+    const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const yyyy = date.getUTCFullYear();
+    return `${dd}-${mm}-${yyyy}`;
+  }
+  return String(val);
+};
+
+export const bulkUploadEvents = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "File is required" });
+  }
+
+  try {
+    const workbook = xlsx.read(req.file.buffer, { type: "buffer" });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = xlsx.utils.sheet_to_json(sheet);
+
+    if (!rows.length) {
+      return res.status(400).json({ message: "Empty file" });
+    }
+
+    const events = rows.map((r, index) => {
+      if (!r.title || !r.startDate) {
+        throw new Error(`Invalid row at line ${index + 2}: title and startDate are required.`);
+      }
+
+      return {
+        title: r.title,
+        eventType: r.eventType || "conference",
+        subSubject: r.subSubject || "",
+        level: r.level || "All",
+        venue: r.venue || "",
+        startDate: parseExcelDateToText(r.startDate),
+        applicationDeadline: parseExcelDateToText(r.applicationDeadline),
+        description: r.description || "",
+        externalLink: r.externalLink || "",
+      };
+    });
+
+    await Event.insertMany(events);
+
+    res.status(201).json({
+      message: "Bulk upload successful",
+      count: events.length,
+    });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 };

@@ -18,7 +18,7 @@ const previousPaperSchema = new mongoose.Schema(
     },
     paperPdfLink: {
       type: String,
-      required: true, // Google Drive link
+      required: true, // Link to the paper PDF
     },
     solutionYoutubeLink: {
       type: String,

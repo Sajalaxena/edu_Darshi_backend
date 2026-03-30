@@ -4,7 +4,7 @@ const academicPositionSchema = new mongoose.Schema(
   {
     positionType: {
       type: String,
-      enum: ["masters", "phd", "postdoc", "project"],
+      enum: ["masters", "phd", "postdoc", "project", "bs/bsc/b.tech"],
       required: true,
       lowercase: true,
     },

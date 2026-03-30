@@ -1,15 +1,15 @@
 import PreviousPaper from "../models/PreviousPaper.js";
 
 /**
- * ADMIN: Create paper (Google Drive link)
+ * ADMIN: Create paper
  */
 export const createPaper = async (req, res) => {
   try {
     const { exam, subject, year, paperPdfLink, solutionYoutubeLink } = req.body;
 
-    if (!paperPdfLink.startsWith("https://drive.google.com")) {
+    if (paperPdfLink && !paperPdfLink.startsWith("http")) {
       return res.status(400).json({
-        message: "Invalid Google Drive link",
+        message: "Invalid link. Please provide a valid URL (starting with http or https).",
       });
     }
 
@@ -102,9 +102,9 @@ export const updatePaper = async (req, res) => {
     const { id } = req.params;
     const { exam, subject, year, paperPdfLink, solutionYoutubeLink } = req.body;
 
-    if (paperPdfLink && !paperPdfLink.startsWith("https://drive.google.com")) {
+    if (paperPdfLink && !paperPdfLink.startsWith("http")) {
       return res.status(400).json({
-        message: "Invalid Google Drive link",
+        message: "Invalid link. Please provide a valid URL (starting with http or https).",
       });
     }
 
