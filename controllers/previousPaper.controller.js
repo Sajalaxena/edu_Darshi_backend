@@ -35,9 +35,26 @@ export const createPaper = async (req, res) => {
 
 /**
  * PUBLIC: Fetch papers
+ * - No `page` query param → return ALL papers (used by main UI)
+ * - With `page` query param → paginated (used by admin panel)
  */
 export const getPapers = async (req, res) => {
   try {
+    // If no explicit page param, return everything (main UI)
+    if (req.query.page === undefined) {
+      const papers = await PreviousPaper.find().sort({ createdAt: -1 });
+      return res.json({
+        data: papers,
+        pagination: {
+          total: papers.length,
+          page: 1,
+          limit: papers.length,
+          totalPages: 1,
+        },
+      });
+    }
+
+    // Paginated response for admin panel
     const page = Math.max(1, parseInt(req.query.page) || 1);
     const limit = Math.min(50, parseInt(req.query.limit) || 10);
     const skip = (page - 1) * limit;
