@@ -19,9 +19,9 @@ const eventSchema = new mongoose.Schema(
       default: "",
     },
     level: {
-      type: String,
-      enum: ["UG", "PG", "School", "Teaching Enrichment", "All"],
-      default: "All",
+      type: [String],
+      enum: ["UG", "PG", "PhD", "Postdoc", "Teaching Enrichment", "Faculty", "Research"],
+      default: ["UG"],
     },
     venue: {
       type: String,

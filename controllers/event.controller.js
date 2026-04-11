@@ -105,7 +105,7 @@ export const bulkUploadEvents = async (req, res) => {
         title: r.title,
         eventType: r.eventType || "conference",
         subSubject: r.subSubject || "",
-        level: r.level || "All",
+        level: r.level ? String(r.level).split(/[,\/]+/).map(l => l.trim()) : ["UG"],
         venue: r.venue || "",
         startDate: parseExcelDateToText(r.startDate),
         applicationDeadline: parseExcelDateToText(r.applicationDeadline),
