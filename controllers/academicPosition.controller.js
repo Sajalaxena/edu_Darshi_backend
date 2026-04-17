@@ -14,6 +14,11 @@ export const createAcademicPosition = async (req, res) => {
 export const getAcademicPositions = async (req, res) => {
   try {
     const filter = {};
+    if (req.query.homepage === "true") {
+      filter.homePriority = { $in: [1, 2, 3, 4] };
+      const items = await AcademicPosition.find(filter).sort({ homePriority: 1 });
+      return res.json({ count: items.length, data: items });
+    }
     if (req.query.positionType) filter.positionType = req.query.positionType;
     if (req.query.search) {
       filter.$or = [
@@ -117,6 +122,7 @@ export const bulkUploadAcademicPositions = async (req, res) => {
         lastDate: parseExcelDateToISO(r.lastDate),
         description: r.description || "",
         externalLink: r.externalLink || "",
+        homePriority: r.homePriority ? Number(r.homePriority) : null,
       };
     });
 

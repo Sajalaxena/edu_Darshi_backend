@@ -14,6 +14,11 @@ export const createJob = async (req, res) => {
 export const getJobs = async (req, res) => {
   try {
     const filter = {};
+    if (req.query.homepage === "true") {
+      filter.homePriority = { $in: [1, 2, 3, 4] };
+      const items = await Job.find(filter).sort({ homePriority: 1 });
+      return res.json({ count: items.length, data: items });
+    }
     if (req.query.search) {
       filter.$or = [
         { title: { $regex: req.query.search, $options: "i" } },
@@ -117,6 +122,7 @@ export const bulkUploadJobs = async (req, res) => {
         deadline: parseExcelDateToISO(r.deadline),
         description: r.description || "",
         externalLink: r.externalLink || "",
+        homePriority: r.homePriority ? Number(r.homePriority) : null,
       };
     });
 

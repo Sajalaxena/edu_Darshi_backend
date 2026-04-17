@@ -14,6 +14,11 @@ export const createEvent = async (req, res) => {
 export const getEvents = async (req, res) => {
   try {
     const filter = {};
+    if (req.query.homepage === "true") {
+      filter.homePriority = { $in: [1, 2, 3, 4] };
+      const items = await Event.find(filter).sort({ homePriority: 1 });
+      return res.json({ count: items.length, data: items });
+    }
     if (req.query.eventType) filter.eventType = req.query.eventType;
     if (req.query.level) filter.level = req.query.level;
     if (req.query.subSubject) filter.subSubject = { $regex: req.query.subSubject, $options: "i" };
@@ -111,6 +116,7 @@ export const bulkUploadEvents = async (req, res) => {
         applicationDeadline: parseExcelDateToText(r.applicationDeadline),
         description: r.description || "",
         externalLink: r.externalLink || "",
+        homePriority: r.homePriority ? Number(r.homePriority) : null,
       };
     });
 

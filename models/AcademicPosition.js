@@ -45,6 +45,11 @@ const academicPositionSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    homePriority: {
+      type: Number,
+      enum: [1, 2, 3, 4],
+      default: null,
+    },
   },
   { timestamps: true }
 );
