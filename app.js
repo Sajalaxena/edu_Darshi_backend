@@ -3,13 +3,13 @@ import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import "./cron/question.cron.js";
+import "./cron/keepAlive.cron.js";
 
 import researchNewsRoutes from "./routes/researchNews.routes.js";
 import previousPaperRoutes from "./routes/previousPaper.routes.js";
 import webinarRoutes from "./routes/webinar.routes.js";
 import blogRoutes from "./routes/blog.routes.js";
 import questionRoutes from "./routes/question.routes.js";
-import "./cron/question.cron.js";
 import contactRoutes from "./routes/contact.routes.js";
 import eventRoutes from "./routes/event.routes.js";
 import academicPositionRoutes from "./routes/academicPosition.routes.js";
